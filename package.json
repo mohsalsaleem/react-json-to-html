@@ -7,7 +7,7 @@
     "test": "jest",
     "git-deploy": "gulp build && gh-pages -d demo/public"
   },
-  "repository": "https://github.com/grizzthedj/react-json-to-html.git",
+  "repository": "https://github.com/mohsalsaleem/react-json-to-html.git",
   "homepage": "",
   "keywords": [
     "react",
@@ -15,7 +15,7 @@
     "html",
     "table"
   ],
-  "author": "Christopher Smith",
+  "author": "Mohamed Saleem",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.12.9",
