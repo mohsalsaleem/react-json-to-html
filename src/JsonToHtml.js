@@ -63,7 +63,7 @@ var JsonToHtml = (function() {
     return '<tr style="' + spacerStyles + '"></tr>';
   }
 
-  // Get the Css obj from Css.js(or from props if present), and return a semicolon 
+  // Get the Css obj from Css.js(or from props if present), and return a semicolon
   // separated list of styles
   var getStyleAttributes = function(className) {
     const defaultCssObj = Css[className];
@@ -80,75 +80,224 @@ var JsonToHtml = (function() {
     return attributes;
   }
 
-  var processArray = function(arr) {
-    var distKeys = [];
-    var html = '';
+  var isPlainObject = function(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+  }
 
-    if (Array.isArray(arr) && arr.length === 0) {
-      return html;
+  var isPrimitiveValue = function(value) {
+    return value === null || typeof value !== 'object';
+  }
+
+  var shouldRenderAsSimpleTable = function(arr) {
+    if (!Array.isArray(arr) || arr.length === 0) {
+      return false;
     }
 
-    // Get distinct keys from first obj
-    // TODO: Handle unstructured objects in array. Assumption, for now, is that
-    // all objects in array will have same structure.
-    if (typeof arr[0] === 'object') {
-      // Render the props if only a single object in the array 
-      if (arr.length === 1) {
-        for (var k in arr[0]) {
-          var value = "";
+    for (var idx = 0; idx < arr.length; idx++) {
+      var item = arr[idx];
 
-          if (arr[0][k]) {
-            value = arr[0][k].toString();
-          }
+      if (!isPlainObject(item)) {
+        return false;
+      }
 
-          html += '<tr style="' + trStyles + '">';
-          html += '  <td style="' + subElementStyles + '">' + getIndent(level) + k + suffix + '</td>';
-          html += '  <td style="' + dataCellStyles + '">' + getIndent(level) + value + suffix + '</td>';
-          html += '</tr>';
-          html += getSpacer();
+      for (var key in item) {
+        if (item.hasOwnProperty(key) && !isPrimitiveValue(item[key])) {
+          return false;
         }
       }
-      else {
-        html = '<tr style="' + trStyles + '">';
+    }
 
-        for (var k in arr[0]) {
-          distKeys.push(k);
+    return true;
+  }
+
+  var formatPrimitive = function(value) {
+    if (value === null || typeof value === 'undefined') {
+      return '';
+    }
+
+    return value.toString();
+  }
+
+  var processArray = function(arr) {
+    var distKeys = [];
+
+    if (!Array.isArray(arr) || arr.length === 0) {
+      return;
+    }
+
+    if (isPlainObject(arr[0])) {
+      if (arr.length === 1) {
+        var obj = arr[0];
+
+        for (var key in obj) {
+          if (!obj.hasOwnProperty(key)) {
+            continue;
+          }
+
+          var value = obj[key];
+
+          if (Array.isArray(value)) {
+            html += '<tr style="' + trStyles + '">';
+            html += '  <td style="' + subElementStyles + '" colspan="3">';
+            html +=      getIndent(level) + key + suffix;
+            html += '  </td>';
+            html += '</tr>';
+            html += getSpacer();
+
+            var prevLevel = level;
+            level += 1;
+            processArray(value);
+            level = prevLevel;
+          }
+          else if (isPlainObject(value)) {
+            html += '<tr style="' + trStyles + '">';
+            html += '  <td style="' + subElementStyles + '" colspan="3">';
+            html +=      getIndent(level) + key + suffix;
+            html += '  </td>';
+            html += '</tr>';
+            html += getSpacer();
+
+            var nestedLevel = level;
+            level += 1;
+            walkTheDog(value);
+            level = nestedLevel;
+          }
+          else {
+            html += '<tr style="' + trStyles + '">';
+            html += '  <td style="' + subElementStyles + '">';
+            html +=      getIndent(level) + key + suffix;
+            html += '  </td>';
+            html += '  <td style="' + dataCellStyles + '">';
+            html +=      getIndent(level) + formatPrimitive(value) + suffix;
+            html += '  </td>';
+            html += '</tr>';
+            html += getSpacer();
+          }
+        }
+
+        return;
+      }
+
+      if (shouldRenderAsSimpleTable(arr)) {
+        html += '<tr style="' + trStyles + '">';
+
+        for (var headerKey in arr[0]) {
+          if (!arr[0].hasOwnProperty(headerKey)) {
+            continue;
+          }
+
+          distKeys.push(headerKey);
           html += '<td style="' + subElementStyles + '">';
-          html +=   getIndent(level) + k + suffix
+          html +=   getIndent(level) + headerKey + suffix;
           html += '</td>';
         }
 
         html += '</tr>';
         html += getSpacer();
 
-        // Render a row for each obj, displaying the value for each distinct key
-        for (var k in arr) {
+        for (var rowIndex = 0; rowIndex < arr.length; rowIndex++) {
+          var rowItem = arr[rowIndex];
+
           html += '<tr style="' + trStyles + '">';
 
-          for (var i=0; i<distKeys.length; i++) {
+          for (var i = 0; i < distKeys.length; i++) {
+            var cellKey = distKeys[i];
+            var cellValue = formatPrimitive(rowItem[cellKey]);
+
             html += '<td style="' + dataCellStyles + '">';
-            html +=   getIndent(level) + arr[k][distKeys[i]] + suffix;
+            html +=   getIndent(level) + cellValue + suffix;
             html += '</td>';
           }
 
           html += '</tr>';
           html += getSpacer();
         }
-      }
-    }
 
-    // Render a <tr> and <td> for each string in an array
-    if (typeof arr[0] === 'string') {
-      for (var k in arr) {
+        return;
+      }
+
+      for (var idx = 0; idx < arr.length; idx++) {
+        var entry = arr[idx];
+
+        if (isPrimitiveValue(entry)) {
+          html += '<tr style="' + trStyles + '">';
+          html += '  <td style="' + dataCellStyles + '" colspan="2">';
+          html +=      getIndent(level) + formatPrimitive(entry) + suffix;
+          html += '  </td>';
+          html += '</tr>';
+          html += getSpacer();
+          continue;
+        }
+
         html += '<tr style="' + trStyles + '">';
-        html += '  <td style="' + dataCellStyles + '" colspan="2">';
-        html +=      getIndent(level) + arr[k] + suffix;
+        html += '  <td style="' + subElementStyles + '" colspan="3">';
+        html +=      getIndent(level) + 'Item ' + (idx + 1) + suffix;
         html += '  </td>';
         html += '</tr>';
+        html += getSpacer();
+
+        var previousLevel = level;
+        level += 1;
+
+        if (Array.isArray(entry)) {
+          processArray(entry);
+        }
+        else {
+          walkTheDog(entry);
+        }
+
+        level = previousLevel;
       }
+
+      return;
     }
 
-    return html;
+    if (Array.isArray(arr[0])) {
+      for (var arrayIndex = 0; arrayIndex < arr.length; arrayIndex++) {
+        var nestedEntry = arr[arrayIndex];
+
+        if (isPrimitiveValue(nestedEntry)) {
+          html += '<tr style="' + trStyles + '">';
+          html += '  <td style="' + dataCellStyles + '" colspan="2">';
+          html +=      getIndent(level) + formatPrimitive(nestedEntry) + suffix;
+          html += '  </td>';
+          html += '</tr>';
+          html += getSpacer();
+          continue;
+        }
+
+        html += '<tr style="' + trStyles + '">';
+        html += '  <td style="' + subElementStyles + '" colspan="3">';
+        html +=      getIndent(level) + 'Item ' + (arrayIndex + 1) + suffix;
+        html += '  </td>';
+        html += '</tr>';
+        html += getSpacer();
+
+        var nestedLevel = level;
+        level += 1;
+
+        if (Array.isArray(nestedEntry)) {
+          processArray(nestedEntry);
+        }
+        else {
+          walkTheDog(nestedEntry);
+        }
+
+        level = nestedLevel;
+      }
+
+      return;
+    }
+
+    for (var primitiveIndex = 0; primitiveIndex < arr.length; primitiveIndex++) {
+      var primitiveValue = arr[primitiveIndex];
+
+      html += '<tr style="' + trStyles + '">';
+      html += '  <td style="' + dataCellStyles + '" colspan="2">';
+      html +=      getIndent(level) + formatPrimitive(primitiveValue) + suffix;
+      html += '  </td>';
+      html += '</tr>';
+    }
   };
 
   var walkTheDog = function(jsonObj) {
@@ -204,7 +353,7 @@ var JsonToHtml = (function() {
         }
        
         if (v instanceof Array) {
-          html += processArray(v);
+          processArray(v);
           hasArray = true;
         }
 
