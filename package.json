@@ -1,5 +1,5 @@
 {
-  "name": "react-json-to-html",
+  "name": "mohsalsaleem/react-json-to-html",
   "version": "0.2.0",
   "description": "A React component to render a simple HTML table from JSON object",
   "main": "dist/App.js",
