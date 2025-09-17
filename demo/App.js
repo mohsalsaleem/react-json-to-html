@@ -85,6 +85,44 @@ const styles = {
     textAlign: 'center',
     color: '#7b8794',
     fontSize: '0.9rem'
+  },
+  installGrid: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '1rem'
+  },
+  installCard: {
+    flex: '1 1 220px',
+    minWidth: '200px',
+    backgroundColor: '#0f172a',
+    color: '#e2e8f0',
+    borderRadius: '14px',
+    padding: '1rem 1.25rem',
+    boxShadow: '0 10px 24px rgba(15, 23, 42, 0.18)'
+  },
+  installLabel: {
+    fontSize: '0.85rem',
+    textTransform: 'uppercase',
+    letterSpacing: '0.08em',
+    marginBottom: '0.75rem',
+    color: '#94a3b8'
+  },
+  codeBlock: {
+    margin: 0,
+    fontFamily: "'Source Code Pro', 'Fira Code', 'Menlo', monospace",
+    fontSize: '0.85rem',
+    lineHeight: 1.6,
+    whiteSpace: 'pre-wrap'
+  },
+  installHint: {
+    marginTop: '1.25rem',
+    color: '#52606d',
+    fontSize: '0.95rem'
+  },
+  link: {
+    color: '#2563eb',
+    textDecoration: 'none',
+    fontWeight: 600
   }
 };
 
@@ -104,6 +142,34 @@ const ExampleSection = ({ title, description, json }) => (
         </div>
       </div>
     </div>
+  </section>
+);
+
+const InstallSection = () => (
+  <section style={styles.section}>
+    <h2 style={styles.sectionTitle}>Install in your project</h2>
+    <p style={styles.description}>
+      Drop <code>JsonTable</code> into any React codebase by installing the published package. Pick the
+      package manager that fits your workflow and run one of the commands below.
+    </p>
+    <div style={styles.installGrid}>
+      <div style={styles.installCard}>
+        <div style={styles.installLabel}>npm</div>
+        <pre style={styles.codeBlock}>npm install @mohsalsaleem/react-json-to-html</pre>
+      </div>
+      <div style={styles.installCard}>
+        <div style={styles.installLabel}>Yarn</div>
+        <pre style={styles.codeBlock}>yarn add @mohsalsaleem/react-json-to-html</pre>
+      </div>
+      <div style={styles.installCard}>
+        <div style={styles.installLabel}>pnpm</div>
+        <pre style={styles.codeBlock}>pnpm add @mohsalsaleem/react-json-to-html</pre>
+      </div>
+    </div>
+    <p style={styles.installHint}>
+      After installing, import <code>JsonTable</code> from{' '}
+      <code>@mohsalsaleem/react-json-to-html</code> and pass it the JSON you would like rendered.
+    </p>
   </section>
 );
 
@@ -179,12 +245,14 @@ const App = () => (
   <div style={styles.page}>
     <div style={styles.content}>
       <header style={styles.header}>
-        <h1 style={styles.title}>react-json-to-html demo</h1>
+        <h1 style={styles.title}>@mohsalsaleem/react-json-to-html demo</h1>
         <p style={styles.subtitle}>
           Interactively explore how <code>JsonTable</code> turns plain JSON objects into accessible HTML tables.
           Compare the raw JSON on the left with the rendered markup on the right.
         </p>
       </header>
+
+      <InstallSection />
 
       <ExampleSection
         title="Simple example"
@@ -199,7 +267,9 @@ const App = () => (
       />
 
       <footer style={styles.footer}>
-        Built with <code>react-json-to-html</code>. View the project on GitHub or install it via <code>npm i react-json-to-html</code>.
+        Built with <code>@mohsalsaleem/react-json-to-html</code>. View the project on{' '}
+        <a style={styles.link} href="https://github.com/mohsalsaleem/react-json-to-html" target="_blank" rel="noreferrer">GitHub</a>{' '}
+        or install it via <code>npm install @mohsalsaleem/react-json-to-html</code>.
       </footer>
     </div>
   </div>
