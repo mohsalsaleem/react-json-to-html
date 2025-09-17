@@ -8,38 +8,43 @@ A simple React component that renders an HTML table from a JSON object.
 >
 > This version fully supports rendering nested JSON structures within arrays, ensuring complex data sets display correctly without additional configuration.
 
+## Demo
+
+Explore the interactive demo at [mohsalsaleem.github.io/react-json-to-html](https://mohsalsaleem.github.io/react-json-to-html/).
+
 ## Installation
 
-```js
-npm install react-json-to-html --save
+Use your preferred package manager to install the published package:
+
+```bash
+npm install @mohsalsaleem/react-json-to-html
+# or
+yarn add @mohsalsaleem/react-json-to-html
+# or
+pnpm add @mohsalsaleem/react-json-to-html
 ```
 
 ## Usage
 
-A simple example. Download and run the demo for more examples, or browse the [examples here]( http://grizzthedj.github.io/react-json-to-html/demo/public).
+A simple example. Download and run the demo for more examples, or browse the [examples here](https://mohsalsaleem.github.io/react-json-to-html/).
 
 ```js
 import React from 'react';
-import {JsonTable} from 'react-json-to-html';
+import { JsonTable } from '@mohsalsaleem/react-json-to-html';
 
-class Nested extends React.Component {
-  const json = {
-    "Server Name": "foo",
-    "Description": "bar",
-    "Specs": {
-      "IP": "10.100.99.101",
-      "MAC": "00:0a:XX:9F:XX:16"
-    },
-    "Date": "Jan 1, 2018"
-  }
-  render() {
-    return (
-      <JsonTable json={json} />
-    )
-  }
-}
+const json = {
+  "Server Name": "foo",
+  "Description": "bar",
+  "Specs": {
+    "IP": "10.100.99.101",
+    "MAC": "00:0a:XX:9F:XX:16"
+  },
+  "Date": "Jan 1, 2018"
+};
 
-export default JsonTable;
+const Nested = () => <JsonTable json={json} />;
+
+export default Nested;
 ```
 ![alt tag](https://user-images.githubusercontent.com/9720835/35484781-f5faabd0-0422-11e8-9144-b622394f96a1.png)
 
@@ -97,7 +102,7 @@ const Css = {
 ## Download Examples
 
 ```js
-git clone https://github.com/grizzthedj/react-json-to-html.git
+git clone https://github.com/mohsalsaleem/react-json-to-html.git
 cd react-json-to-html
 npm install
 gulp demo
