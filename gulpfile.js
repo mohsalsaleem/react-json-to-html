@@ -6,6 +6,12 @@ const babel = require('gulp-babel');
 const shell = require('gulp-shell');
 const del = require('del');
 
+const [nodeMajor] = process.versions.node.split('.').map((value) => parseInt(value, 10));
+if (Number.isInteger(nodeMajor) && nodeMajor >= 17) {
+  const existingOptions = process.env.NODE_OPTIONS ? `${process.env.NODE_OPTIONS} ` : '';
+  process.env.NODE_OPTIONS = `${existingOptions}--openssl-legacy-provider`.trim();
+}
+
 gulp.task('clean-build', function() {
   return del(['./dist/*.js']);
 });

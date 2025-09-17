@@ -5,7 +5,8 @@
   "main": "dist/App.js",
   "scripts": {
     "test": "jest",
-    "git-deploy": "gulp build && gh-pages -d demo/public"
+    "build": "gulp build",
+    "git-deploy": "npm run build && gh-pages -d demo/public"
   },
   "repository": "https://github.com/mohsalsaleem/react-json-to-html.git",
   "homepage": "",

@@ -11,6 +11,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, './demo/public'),
     filename: 'demo.js',
+    hashFunction: 'sha256',
   },
   module: {
     rules: [{
