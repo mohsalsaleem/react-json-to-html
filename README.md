@@ -4,6 +4,10 @@
 
 A simple React component that renders an HTML table from a JSON object.
 
+> **Note**
+>
+> This version fully supports rendering nested JSON structures within arrays, ensuring complex data sets display correctly without additional configuration.
+
 ## Installation
 
 ```js
